@@ -15,6 +15,16 @@
 	margin: 0px;
 	clear: both;
 }
+.hugeRed {
+	width: 1000px;
+	height: 1000px;
+	background-color: red;
+}
+.hugeGreen {
+	width: 1000px;
+	height: 1000px;
+	background-color: green;
+}
 #content {
 
 }
