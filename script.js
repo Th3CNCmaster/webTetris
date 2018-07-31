@@ -1,22 +1,26 @@
 document.addEventListener("DOMContentLoaded", 
 	function (event) {
-		function tetrisskapare (x, y) {
-			var xCount = 0;
-			var yCount = 0;
-			var content = document.getElementById("content");	// skapar divboxar och ritar spelplanen
-
+		var nummer = 1;
+		var lista = new Array();
+		var vertikal = 10;
+		var horisontell = 5;		
+		var xCount = 0;
+		var yCount = 0;
+		var content = document.getElementById("content");
+		function tetrisskapare (x, y) {		// skapar divboxar, numrerar dem med koordinater, och ritar spelplanen
 			while (xCount < x && yCount < y) {			
 				if (xCount == 0) {
-					content.innerHTML = content.innerHTML + "<div class='firstTet'></div>"
+					content.innerHTML = content.innerHTML + "<div id='" + nummer + "' class='firstTet'></div>"
 					xCount++;
 				}else if (xCount == x-1) {
-					content.innerHTML = content.innerHTML + "<div class='tet'></div>"
+					content.innerHTML = content.innerHTML + "<div id='" + nummer + "' class='tet'></div>"
 					xCount = 0;
 					yCount++;
 				}else {
-					content.innerHTML = content.innerHTML + "<div class='tet'></div>"
+					content.innerHTML = content.innerHTML + "<div id='" + nummer + "' class='tet'></div>"
 					xCount++;
 				};
+				nummer++;
 			};
 		};
 		
@@ -39,26 +43,69 @@ document.addEventListener("DOMContentLoaded",
 				};
 				steg++;
 			};
-
 			if (antalFyllda == y) {
 				//document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<h1> Du vann, din fule fan</h1>";
 				return "radklar";
 			};
 		};
 
-		function grafikMotor () {
+		function flyttaNerRad () {
+			var plats = 0;
+			var nyLista = new Array();
+			while (plats < horisontell*vertikal-horisontell) {
+				var byte = lista[plats];
+				nyLista[plats+horisontell] = byte;
+				plats++;
+			};
+			plats = 0;
+			while (plats < horisontell) {
+				nyLista[plats] = 0;
+				plats++;
+			};
+			plats = 0;
+			var change;
+			while (plats < vertikal*horisontell) {
+				change = nyLista[plats];
+				lista[plats] = change;
+				plats++;
+			}
+		};
+
+		function rita () {	//funktionen ritar rätt färg på rutan beroende på motsvarande divbox's värde i listan
+			var räknare = "1";
+			while(räknare <= 50) {
+				if (lista[räknare] == 1) {
+					document.getElementById(räknare).style.backgroundColor = "lightblue";
+				}else {
+					document.getElementById(räknare).style.backgroundColor = "gray";
+				}
+				räknare++;
+			};
 
 		};
 
-		var horisontell = 5;
-		var vertikal = 10;
 		tetrisskapare(horisontell, vertikal); //divboxar, spelplan
-		var lista = new Array();
+
 		skapaLista(horisontell, vertikal); // lista
-		// lista[1] = 1;
-		if (testaOmRadKlar(vertikal, horisontell) == "radklar") {
-			flyttaNerRad(vertikal, horisontell);
-		}
+
+		// if (testaOmRadKlar(vertikal, horisontell) == "radklar") {
+		// 	flyttaNerRad(vertikal, horisontell);
+		// }
+
+
+		// runttramsande för testning av funktion
+		lista[5] = 1;
+		lista[2] = 1;
+		lista[36] = 1;
+		lista[25] = 1;
+		lista[18] = 1;
+		rita();
+		flyttaNerRad();
+		rita();
+		flyttaNerRad();
+		rita();
+
+
 
 	}
 );
