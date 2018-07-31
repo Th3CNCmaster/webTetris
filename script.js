@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", 
 	function (event) {
+		document.addEventListener("keydown", klossrörelse);
 		var nummer = 1;
 		var lista = new Array();
 		var vertikal = 10;
@@ -8,6 +9,20 @@ document.addEventListener("DOMContentLoaded",
 		var yCount = 0;
 		var content = document.getElementById("content");
 		var poäng = 0;
+		var design = document.getElementById("jSDesign");
+		var variabeln;
+		var ordning = 1;
+		
+		function styleSetup () {		// designsetup som inte levererar
+			var andel = 100/horisontell;
+			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + 100/andel + "vw; height: " + 100/andel + "vw; float: left; border: 0px; margin: 0px;}"
+			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + 100/andel + "vw; height: " + 100/andel + "vw; float: left; border: 0px; margin: 0px; clear: both;}"
+			design.innerHTML = design.innerHTML + ".hugeRed {width: 100vw; height: 100vh; background-color: red; float: left;}"
+			design.innerHTML = design.innerHTML + ".hugeGreen {width: 100vw; height: 100vh; background-color: green; float: left;}"
+			design.innerHTML = design.innerHTML + "#content {float: left; margin-left: " + (50-(100*2.5)/(andel)) + "vw; font-family: 'Raleway', sans-serif;}"
+
+		};
+
 		function tetrisskapare (x, y) {		// skapar divboxar, numrerar dem med koordinater, och ritar spelplanen
 			while (xCount < x && yCount < y) {			
 				if (xCount == 0) {
@@ -49,7 +64,7 @@ document.addEventListener("DOMContentLoaded",
 			if (antalFyllda == horisontell) {     // antalFyllda=x?????????????
 				document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeGreen'> win </h1>";
 				console.log("Den sista raden har fyllts!!!");
-				return "radklar";
+				// return "radklar";
 			};
 			console.log("testaOmRadKlar");
 		};
@@ -84,7 +99,7 @@ document.addEventListener("DOMContentLoaded",
 					document.getElementById(räknare).style.backgroundColor = "lightblue";
 				}else {
 					document.getElementById(räknare).style.backgroundColor = "gray";
-				}
+				};
 				räknare++;
 			};
 			console.log("rita");
@@ -101,7 +116,7 @@ document.addEventListener("DOMContentLoaded",
 					};
 					test = test + horisontell;
 					if (antalFylldaRad == vertikal) {
-						document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeRed'> lose </h1>";
+						// document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeRed'> lose </h1>";
 						console.log("FAIIIIIIIIIL");
 						// return "förlust";
 					};
@@ -148,7 +163,58 @@ document.addEventListener("DOMContentLoaded",
 			document.getElementById("poäng").innerHTML = "<h2>" + poäng + "</h2>"
 			poäng = poäng + 10;
 			console.log("poänghållare")
-		}
+		};
+		function klossrörelse (event) {				//Buggy AF :-(, ritar automatiskt efter körning
+			var bytLista = new Array();
+			var place = 1;
+			if (event.key == "w") {
+
+			}else if (event.key == "s") {
+
+			}else if (event.key == "a") {
+				while (place <= horisontell*vertikal+1) {
+					var byte = lista[place];
+					bytLista[place-1] = byte;
+					place++;
+				};
+				// place = 1;
+				// while (place <= 1) {
+				// 	bytLista[place] = 0;
+				// 	place++;
+				// };
+				place = 1;
+				var change;
+				while (place <= vertikal*horisontell) {
+					change = bytLista[place];
+					lista[place] = change;
+					place++;
+				};
+				place = 1;
+			}else if (event.key == "d") {
+				while (place <= horisontell*vertikal-1) {
+					var byte = lista[place];
+					bytLista[place+1] = byte;
+					place++;
+				};
+				place = 1;
+				// while (place <= horisontell) {
+				// 	bytLista[place] = 0;
+				// 	place++;
+				// };
+				plats = 1;
+				var change;
+				while (place <= vertikal*horisontell) {
+					change = bytLista[place];
+					lista[place] = change;
+					place++;
+				};
+
+			};
+			console.log(event.key + "klossrörelse");
+			rita();
+		};
+
+		styleSetup();		//stilfixarn
 		tetrisskapare(horisontell, vertikal); //divboxar, spelplan
 		skapaLista(horisontell, vertikal); // lista                        Dessa körs efterdirekt DOMContentLoaded och behöver bara köras en gång.
 
@@ -165,19 +231,37 @@ document.addEventListener("DOMContentLoaded",
 		rita();
 		kontrolleraFörlust();
 		testaOmRadKlar();
-		var variabeln;
-		function webTetris() {
-			var milliPerTick = 1000/3;
-			variablen = setInterval(poänghållare, milliPerTick*3);
-  			variabeln = setInterval(flyttaNerRad, milliPerTick);
-  		 	variabeln = setInterval(rita, milliPerTick/20);
-  		 	variabeln = setInterval(testaOmRadKlar, milliPerTick/3);
-  		 	variabeln = setInterval(kontrolleraFörlust, milliPerTick/3);
-  		 	variabeln = setInterval(slumpaKloss, milliPerTick*7);
+			var milliPerTick = 1000/6;
+			variabeln = setInterval(webTetris, milliPerTick);
+			
+			function webTetris() {
+			if (ordning <= vertikal) {
+				poänghållare();
+  				flyttaNerRad();
+  		 		rita();
+  		 		testaOmRadKlar();
+  		 		kontrolleraFörlust();
+  		 		ordning++;
+			}else {
+  		 		slumpaKloss();
+  		 		rita();
+  		 		ordning = 1;
+			};
 
-		}
+		};
 
-		webTetris();
+		// function webTetris() {
+		// 	var milliPerTick = 1000/3;
+		// 	variablen = setInterval(poänghållare, milliPerTick*3);
+  // 			variabeln = setInterval(flyttaNerRad, milliPerTick);
+  // 		 	variabeln = setInterval(rita, milliPerTick/20);
+  // 		 	variabeln = setInterval(testaOmRadKlar, milliPerTick/3);
+  // 		 	variabeln = setInterval(kontrolleraFörlust, milliPerTick/3);
+  // 		 	variabeln = setInterval(slumpaKloss, milliPerTick*7);
+
+		// };
+
+		// webTetris();
 	}
 );
 
