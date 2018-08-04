@@ -14,15 +14,21 @@ document.addEventListener("DOMContentLoaded",
 		var ordning = 1;
 		var stoppa = 0;
 
-		// Betydelse av listvärden för divar. 0: inget på platsen 1: aktiv 2: blev stuck denna "tick" 3:stuck 
-		
-		function styleSetup () {		// designsetup som inte levererar
-			var andel = 100/horisontell;
-			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + 100/andel + "vmin; height: " + 100/andel + "vmin; float: left; border: 1px solid black; margin: 0px;}"
-			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + 100/andel + "vmin; height: " + 100/andel + "vmin; float: left; border: 1px solid black; margin: 0px; clear: both;}"
+		// Betydelse av listvärden för divar. 0: inget på platsen 1: aktiv 2: blev stuck denna "tick" 3: stuck 
+		// + (horisontell*(50/andel)) +
+		function styleSetup () {
+			var andel;
+			if (horisontell > vertikal) {
+				andel = 100/horisontell;
+			}else{
+				andel = 100/vertikal
+			};
+
+			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px;}"
+			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px; clear: both;}"
 			design.innerHTML = design.innerHTML + ".hugeRed {width: 100vw; height: 100vh; background-color: red; float: left;}"
 			design.innerHTML = design.innerHTML + ".hugeGreen {width: 100vw; height: 100vh; background-color: green; float: left;}"
-			design.innerHTML = design.innerHTML + "#content {float: left; margin-left: " + (50-(100*1.6)/(andel)) + "vw; font-family: 'Raleway', sans-serif;}"
+			design.innerHTML = design.innerHTML + "#content {position: absolute; left: 50%; margin: 0 0 0 -" + (andel*0.4)*horisontell + "vmin; vw; font-family: 'Raleway', sans-serif;}"
 
 		};
 
@@ -73,30 +79,6 @@ document.addEventListener("DOMContentLoaded",
 			console.log("testaOmRadKlar");
 		};
 
-		// Gammal, ineffektiv och korkad mögversion av flyttaNerRad
-		// function flyttaNerRad () {
-		// 	var plats = 1;
-		// 	var nyLista = new Array();
-		// 	while (plats <= horisontell*vertikal-horisontell) {
-		// 		var byte = lista[plats];
-		// 		nyLista[plats+horisontell] = byte;
-		// 		plats++;
-		// 	};
-		// 	plats = 1;
-		// 	while (plats <= horisontell) {
-		// 		nyLista[plats] = 0;
-		// 		plats++;
-		// 	};
-		// 	plats = 1;
-		// 	var change;
-		// 	while (plats <= vertikal*horisontell) {
-		// 		change = nyLista[plats];
-		// 		lista[plats] = change;
-		// 		plats++;
-		// 	};
-		// 	console.log("flyttaNerRad");
-		// };
-
 		function flyttaNerRad () {
 			var plats = 1;
 			var scroll = 1;
@@ -119,6 +101,37 @@ document.addEventListener("DOMContentLoaded",
 				scroll = nyLista[plats];
 				lista[plats] = scroll;
 				plats++;
+			};
+			var mög = 0;
+			var megamög = 0;
+			plats = 1;
+			while (mög < horisontell) {
+				if (lista[vertikal*horisontell-mög] == 3 || lista[vertikal*horisontell-mög] == 2) {
+					megamög++;
+				};
+				mög++;
+				if (megamög == horisontell) {
+					var mögLista = new Array();
+					while (plats <= vertikal*horisontell) {
+						if (lista[plats] == 3 || lista[plats] == 2) {
+							scroll = lista[plats];
+							mögLista[plats+horisontell] = scroll;
+						}else if (lista[plats] == 1) {
+							scroll = lista[plats];
+							mögLista[plats] = scroll;
+						};
+						plats++;
+					};
+					plats = 1;
+					while (plats <= vertikal*horisontell) {
+						scroll = mögLista[plats];
+						lista[plats] = scroll;
+						plats++;
+					};
+					megamög = 0;
+					mög = 0;
+				};
+
 			};
 			console.log("flyttaNerRad");
 		};
@@ -214,54 +227,110 @@ document.addEventListener("DOMContentLoaded",
 		function klossrörelse (event) {				//Buggy AF :-(, ritar automatiskt efter körning
 			var plats = 1;
 			var scroll = 1;
+			var scrollare = 1;
+			var blockerare = 0;
 			var nyLista = new Array();
 			if (event.key == "w") {
 
 			}else if (event.key == "s") {
+				var block2;
+				while (blockerare == 0) {
+					block2 = 0;
+					while (plats <= horisontell*vertikal){
+						if (lista[plats] == 1) {
+							block2++;
+						};
+						plats++;
+					};
+					if (block2 == 0) {
+						blockerare++;
+					}else{
+						görStuck ();
+						flyttaNerRad();
+						görStuck ();
+						rita();
+					};
+				};
 
 			}else if (event.key == "a") {
-				while (plats <= horisontell*vertikal) {
-				if (lista[plats] == 1 && lista[plats-1] != 2) {
-					nyLista[plats-1] = 1;
-					if (lista[plats-1 == 0]) {
-						nyLista[plats] = 0;
+				while (scrollare <= vertikal) {
+					if (lista[horisontell*scrollare-horisontell+1] == 1) {
+						blockerare++;
+						scrollare = vertikal+1;
 					};
-				}else if (lista[plats] == 2) {
-					nyLista[plats] = 2;
-				}else if (lista[plats] == 3) {
-					nyLista[plats] = 3;
+					scrollare++;
 				};
-				plats++;
-			};
-				plats = 1;
-				while (plats <= horisontell*vertikal) {
-					scroll = nyLista[plats];
-					lista[plats] = scroll;
+				while (plats <= horisontell*vertikal){
+					if (lista[plats] == 1 && lista[plats-1] == 3) {
+						blockerare++;
+						plats = horisontell*vertikal;
+					};
 					plats++;
 				};
+				plats = 1;
+				if (blockerare == 0) {
+					while (plats <= horisontell*vertikal) {
+						if (lista[plats] == 1 && lista[plats-1] != 2) {
+							nyLista[plats-1] = 1;
+							if (lista[plats-1 == 0]) {
+								nyLista[plats] = 0;
+							};
+						}else if (lista[plats] == 2) {
+							nyLista[plats] = 2;
+						}else if (lista[plats] == 3) {
+							nyLista[plats] = 3;
+						};
+						plats++;
+					};
+					plats = 1;
+					while (plats <= horisontell*vertikal) {
+						scroll = nyLista[plats];
+						lista[plats] = scroll;
+						plats++;
+					};	
+				};
+				
 			}else if (event.key == "d") {
-				while (plats <= horisontell*vertikal) {
-				if (lista[plats] == 1 && lista[plats+1] != 2) {
-					nyLista[plats+1] = 1;
-					if (lista[plats+1 == 0]) {
-						nyLista[plats] = 0;
+				while (scrollare <= vertikal) {
+					if (lista[horisontell*scrollare] == 1) {
+						blockerare++;
+						scrollare = vertikal+1;
 					};
-				}else if (lista[plats] == 2) {
-					nyLista[plats] = 2;
-				}else if (lista[plats] == 3) {
-					nyLista[plats] = 3;
+					scrollare++;
 				};
-				plats++;
-			};
-				plats = 1;
-				while (plats <= horisontell*vertikal) {
-					scroll = nyLista[plats];
-					lista[plats] = scroll;
+				while (plats <= horisontell*vertikal){
+					if (lista[plats] == 1 && lista[plats+1] == 3) {
+						blockerare++;
+						plats = horisontell*vertikal;
+					};
 					plats++;
 				};
+				plats = 1;
+				if (blockerare == 0) {
+					while (plats <= horisontell*vertikal) {
+						if (lista[plats] == 1 && lista[plats+1] != 2) {
+							nyLista[plats+1] = 1;
+						if (lista[plats+1 == 0]) {
+							nyLista[plats] = 0;
+						};
+						}else if (lista[plats] == 2) {
+							nyLista[plats] = 2;
+						}else if (lista[plats] == 3) {
+							nyLista[plats] = 3;
+						};
+						plats++;
+					};
+					plats = 1;
+					while (plats <= horisontell*vertikal) {
+						scroll = nyLista[plats];
+						lista[plats] = scroll;
+						plats++;
+					};
+				};
+				
 
 			};
-			console.log(event.key + "klossrörelse");
+			console.log(event.key + ": klossrörelse");
 			rita();
 		};
 
@@ -312,7 +381,7 @@ document.addEventListener("DOMContentLoaded",
 
 
 		// runttramsande för testning av funktion
-		lista[1] = 0;
+		// lista[1] = 0;
 		// lista[12] = 2;
 		// lista[13] = 2;
 		// lista[14] = 2;
