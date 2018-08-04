@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded",
 		document.addEventListener("keydown", klossrörelse);
 		var nummer = 1;
 		var lista = new Array();
-		var vertikal = 10;
-		var horisontell = 5;		
+		var vertikal = 12;
+		var horisontell = 6;		
 		var xCount = 0;
 		var yCount = 0;
 		var content = document.getElementById("content");
@@ -12,14 +12,17 @@ document.addEventListener("DOMContentLoaded",
 		var design = document.getElementById("jSDesign");
 		var variabeln;
 		var ordning = 1;
+		var stoppa = 0;
+
+		// Betydelse av listvärden för divar. 0: inget på platsen 1: aktiv 2: blev stuck denna "tick" 3:stuck 
 		
 		function styleSetup () {		// designsetup som inte levererar
 			var andel = 100/horisontell;
-			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + 100/andel + "vw; height: " + 100/andel + "vw; float: left; border: 0px; margin: 0px;}"
-			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + 100/andel + "vw; height: " + 100/andel + "vw; float: left; border: 0px; margin: 0px; clear: both;}"
+			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + 100/andel + "vmin; height: " + 100/andel + "vmin; float: left; border: 1px solid black; margin: 0px;}"
+			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + 100/andel + "vmin; height: " + 100/andel + "vmin; float: left; border: 1px solid black; margin: 0px; clear: both;}"
 			design.innerHTML = design.innerHTML + ".hugeRed {width: 100vw; height: 100vh; background-color: red; float: left;}"
 			design.innerHTML = design.innerHTML + ".hugeGreen {width: 100vw; height: 100vh; background-color: green; float: left;}"
-			design.innerHTML = design.innerHTML + "#content {float: left; margin-left: " + (50-(100*2.5)/(andel)) + "vw; font-family: 'Raleway', sans-serif;}"
+			design.innerHTML = design.innerHTML + "#content {float: left; margin-left: " + (50-(100*1.6)/(andel)) + "vw; font-family: 'Raleway', sans-serif;}"
 
 		};
 
@@ -62,41 +65,73 @@ document.addEventListener("DOMContentLoaded",
 				steg++;
 			};
 			if (antalFyllda == horisontell) {     // antalFyllda=x?????????????
-				document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeGreen'> win </h1>";
+				// document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeGreen'> win </h1>";
 				console.log("Den sista raden har fyllts!!!");
+				stoppa++;
 				// return "radklar";
 			};
 			console.log("testaOmRadKlar");
 		};
 
+		// Gammal, ineffektiv och korkad mögversion av flyttaNerRad
+		// function flyttaNerRad () {
+		// 	var plats = 1;
+		// 	var nyLista = new Array();
+		// 	while (plats <= horisontell*vertikal-horisontell) {
+		// 		var byte = lista[plats];
+		// 		nyLista[plats+horisontell] = byte;
+		// 		plats++;
+		// 	};
+		// 	plats = 1;
+		// 	while (plats <= horisontell) {
+		// 		nyLista[plats] = 0;
+		// 		plats++;
+		// 	};
+		// 	plats = 1;
+		// 	var change;
+		// 	while (plats <= vertikal*horisontell) {
+		// 		change = nyLista[plats];
+		// 		lista[plats] = change;
+		// 		plats++;
+		// 	};
+		// 	console.log("flyttaNerRad");
+		// };
+
 		function flyttaNerRad () {
 			var plats = 1;
+			var scroll = 1;
 			var nyLista = new Array();
-			while (plats <= horisontell*vertikal-horisontell) {
-				var byte = lista[plats];
-				nyLista[plats+horisontell] = byte;
+			while (plats <= horisontell*vertikal) {
+				if (lista[plats] == 1) {
+					nyLista[plats+horisontell] = 1;
+					if (lista[plats+horisontell == 0]) {
+						nyLista[plats] = 0;
+					};
+				}else if (lista[plats] == 2) {
+					nyLista[plats] = 2;
+				}else if (lista[plats] == 3) {
+					nyLista[plats] = 3;
+				};
 				plats++;
 			};
 			plats = 1;
-			while (plats <= horisontell) {
-				nyLista[plats] = 0;
-				plats++;
-			};
-			plats = 1;
-			var change;
-			while (plats <= vertikal*horisontell) {
-				change = nyLista[plats];
-				lista[plats] = change;
+			while (plats <= horisontell*vertikal) {
+				scroll = nyLista[plats];
+				lista[plats] = scroll;
 				plats++;
 			};
 			console.log("flyttaNerRad");
 		};
 
 		function rita () {	//funktionen ritar rätt färg på rutan beroende på motsvarande divbox's värde i listan
-			var räknare = "1";
+			var räknare = 1;
 			while(räknare <= vertikal*horisontell) {
 				if (lista[räknare] == 1) {
 					document.getElementById(räknare).style.backgroundColor = "lightblue";
+				}else if (lista[räknare] == 2){
+					document.getElementById(räknare).style.backgroundColor = "red";
+				}else if (lista[räknare] == 3){
+					document.getElementById(räknare).style.backgroundColor = "green";
 				}else {
 					document.getElementById(räknare).style.backgroundColor = "gray";
 				};
@@ -111,14 +146,14 @@ document.addEventListener("DOMContentLoaded",
 			var b = 1;
 			while (b <= horisontell) {
 				while (test < vertikal*horisontell) {
-					if (lista[test] == 1) {
+					if (lista[test] == 2) {
 						antalFylldaRad++;
 					};
 					test = test + horisontell;
 					if (antalFylldaRad == vertikal) {
-						// document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeRed'> lose </h1>";
+						document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeRed'> lose </h1>";
 						console.log("FAIIIIIIIIIL");
-						// return "förlust";
+						failSomFan = 1;
 					};
 				};
 				b++;
@@ -131,31 +166,42 @@ document.addEventListener("DOMContentLoaded",
 		};
 
 		function slumpaKloss () {
-			var mitt = Math.round(horisontell/2);
-			var klossSlumpare = Math.round(Math.random()*100);
-			console.log(klossSlumpare);
-			if (0 <= klossSlumpare && klossSlumpare < 25) {
-				lista[mitt] = 1;
-				lista[mitt+horisontell] = 1;
-				lista[mitt+2*horisontell] =1;
-				console.log("bit vertikal skapad");
-			}else if (25 < klossSlumpare && klossSlumpare < 50){
-				lista[mitt] = 1;
-				lista[mitt+1] = 1;
-				lista[mitt-1] = 1;
-				console.log("bit horisontell skapad");
-			}else if (50 < klossSlumpare && klossSlumpare < 75){
-				lista[mitt] = 1;
-				lista[mitt+1] = 1;
-				lista[mitt-1] = 1;
-				lista[mitt+1+horisontell] = 1;
-				console.log("krokbit2 skapad");
-			}else if (75 < klossSlumpare && klossSlumpare < 100){
-				lista[mitt] = 1;
-				lista[mitt+1] = 1;
-				lista[mitt-1+horisontell] = 1;
-				lista[mitt-1] = 1;
-				console.log("krokbit skapad");
+			var platsen = 1;
+			var summa = 0;
+			while (platsen <= vertikal*horisontell) {
+				if (lista[platsen] == 1) {
+					summa++;
+				};
+				platsen++;
+			};
+			if (summa == 0) {
+				var mitt = Math.round(horisontell/2);
+				console.log("horisontell/2 ish: " + Math.round(horisontell/2))
+				var klossSlumpare = Math.round(Math.random()*100);
+				console.log(klossSlumpare);
+				if (0 <= klossSlumpare && klossSlumpare < 25) {
+					lista[mitt] = 1;
+					lista[mitt+horisontell] = 1;
+					lista[mitt+2*horisontell] =1;
+					console.log("bit vertikal skapad");
+				}else if (25 < klossSlumpare && klossSlumpare < 50){
+					lista[mitt] = 1;
+					lista[mitt+1] = 1;
+					lista[mitt-1] = 1;
+					console.log("bit horisontell skapad");
+				}else if (50 < klossSlumpare && klossSlumpare < 75){
+					lista[mitt] = 1;
+					lista[mitt+1] = 1;
+					lista[mitt-1] = 1;
+					lista[mitt+1+horisontell] = 1;
+					console.log("krokbit2 skapad");
+				}else if (75 < klossSlumpare && klossSlumpare < 100){
+					lista[mitt] = 1;
+					lista[mitt+1] = 1;
+					lista[mitt-1+horisontell] = 1;
+					lista[mitt-1] = 1;
+					console.log("krokbit skapad");
+				};
 			};
 		};
 
@@ -164,54 +210,97 @@ document.addEventListener("DOMContentLoaded",
 			poäng = poäng + 10;
 			console.log("poänghållare")
 		};
+
 		function klossrörelse (event) {				//Buggy AF :-(, ritar automatiskt efter körning
-			var bytLista = new Array();
-			var place = 1;
+			var plats = 1;
+			var scroll = 1;
+			var nyLista = new Array();
 			if (event.key == "w") {
 
 			}else if (event.key == "s") {
 
 			}else if (event.key == "a") {
-				while (place <= horisontell*vertikal+1) {
-					var byte = lista[place];
-					bytLista[place-1] = byte;
-					place++;
+				while (plats <= horisontell*vertikal) {
+				if (lista[plats] == 1 && lista[plats-1] != 2) {
+					nyLista[plats-1] = 1;
+					if (lista[plats-1 == 0]) {
+						nyLista[plats] = 0;
+					};
+				}else if (lista[plats] == 2) {
+					nyLista[plats] = 2;
+				}else if (lista[plats] == 3) {
+					nyLista[plats] = 3;
 				};
-				// place = 1;
-				// while (place <= 1) {
-				// 	bytLista[place] = 0;
-				// 	place++;
-				// };
-				place = 1;
-				var change;
-				while (place <= vertikal*horisontell) {
-					change = bytLista[place];
-					lista[place] = change;
-					place++;
-				};
-				place = 1;
-			}else if (event.key == "d") {
-				while (place <= horisontell*vertikal-1) {
-					var byte = lista[place];
-					bytLista[place+1] = byte;
-					place++;
-				};
-				place = 1;
-				// while (place <= horisontell) {
-				// 	bytLista[place] = 0;
-				// 	place++;
-				// };
+				plats++;
+			};
 				plats = 1;
-				var change;
-				while (place <= vertikal*horisontell) {
-					change = bytLista[place];
-					lista[place] = change;
-					place++;
+				while (plats <= horisontell*vertikal) {
+					scroll = nyLista[plats];
+					lista[plats] = scroll;
+					plats++;
+				};
+			}else if (event.key == "d") {
+				while (plats <= horisontell*vertikal) {
+				if (lista[plats] == 1 && lista[plats+1] != 2) {
+					nyLista[plats+1] = 1;
+					if (lista[plats+1 == 0]) {
+						nyLista[plats] = 0;
+					};
+				}else if (lista[plats] == 2) {
+					nyLista[plats] = 2;
+				}else if (lista[plats] == 3) {
+					nyLista[plats] = 3;
+				};
+				plats++;
+			};
+				plats = 1;
+				while (plats <= horisontell*vertikal) {
+					scroll = nyLista[plats];
+					lista[plats] = scroll;
+					plats++;
 				};
 
 			};
 			console.log(event.key + "klossrörelse");
 			rita();
+		};
+
+		//	gör så att skiten som är längst ner inte bara försvinner, utan fastnar
+		function görStuck () {
+			var vandra = horisontell*vertikal;
+			var placement = 1;
+			while (placement <= horisontell*vertikal) {
+				if (lista[placement] == 2){
+					lista[placement] = 3;
+				};
+				placement++;
+			};
+			placement = 1;
+			while (vandra >= 1) {
+				if (lista[vandra] == 1 && vandra > horisontell*vertikal-horisontell || lista[vandra+horisontell] == 2 && lista[vandra] == 1 || lista[vandra+horisontell] == 3	 && lista[vandra] == 1 || lista[vandra+1] == 2 && lista[vandra] == 1 || lista[vandra-1] == 2 && lista[vandra] == 1) {
+					lista[vandra] = 2;
+				};
+				vandra--;
+			};
+			while (placement <= horisontell*vertikal) {
+				if (lista[placement-horisontell] == 2 && lista[placement] == 1 || lista[placement+horisontell] == 2 && lista[placement] == 1 || lista[placement+1] == 2 && lista[placement] == 1 || lista[placement-1] == 2 && lista[placement] == 1) {
+					lista[placement] = 2;
+				};
+				placement++;
+			};
+
+			console.log("görStuck");
+		};
+		
+		function stuckPermanent () {
+			var vandrare = 1;
+			while (vandrare <= horisontell*vertikal) {
+				if (lista[vandrare] == 2) {
+					lista[vandrare] == 3;
+				};
+				vandrare++;
+			};
+			console.log("stuckPermanent");
 		};
 
 		styleSetup();		//stilfixarn
@@ -223,45 +312,23 @@ document.addEventListener("DOMContentLoaded",
 
 
 		// runttramsande för testning av funktion
-		lista[1] = 1;
-		lista[2] = 1;
-		lista[3] = 1;
-		lista[4] = 1;
+		lista[1] = 0;
+		// lista[12] = 2;
+		// lista[13] = 2;
+		// lista[14] = 2;
 
-		rita();
-		kontrolleraFörlust();
-		testaOmRadKlar();
-			var milliPerTick = 1000/6;
+			var milliPerTick = 1000/3;
 			variabeln = setInterval(webTetris, milliPerTick);
-			
 			function webTetris() {
-			if (ordning <= vertikal) {
-				poänghållare();
-  				flyttaNerRad();
-  		 		rita();
-  		 		testaOmRadKlar();
-  		 		kontrolleraFörlust();
-  		 		ordning++;
-			}else {
-  		 		slumpaKloss();
-  		 		rita();
-  		 		ordning = 1;
+	  				flyttaNerRad();
+					slumpaKloss();
+					rita();
+					poänghållare();
+	  		 		// testaOmRadKlar();
+	  		 		kontrolleraFörlust();
+	  		 		görStuck();
 			};
 
-		};
-
-		// function webTetris() {
-		// 	var milliPerTick = 1000/3;
-		// 	variablen = setInterval(poänghållare, milliPerTick*3);
-  // 			variabeln = setInterval(flyttaNerRad, milliPerTick);
-  // 		 	variabeln = setInterval(rita, milliPerTick/20);
-  // 		 	variabeln = setInterval(testaOmRadKlar, milliPerTick/3);
-  // 		 	variabeln = setInterval(kontrolleraFörlust, milliPerTick/3);
-  // 		 	variabeln = setInterval(slumpaKloss, milliPerTick*7);
-
-		// };
-
-		// webTetris();
 	}
 );
 
