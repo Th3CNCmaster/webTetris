@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded",
 		var variabeln;
 		var ordning = 1;
 		var stoppa = 0;
+		var bitTyp = 0;
+		var mitt = Math.round(horisontell/2);
 
 		// Betydelse av listvärden för divar. 0: inget på platsen 1: aktiv 2: blev stuck denna "tick" 3: stuck 
 		// + (horisontell*(50/andel)) +
@@ -28,7 +30,7 @@ document.addEventListener("DOMContentLoaded",
 			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px; clear: both;}"
 			design.innerHTML = design.innerHTML + ".hugeRed {width: 100vw; height: 100vh; background-color: red; float: left;}"
 			design.innerHTML = design.innerHTML + ".hugeGreen {width: 100vw; height: 100vh; background-color: green; float: left;}"
-			design.innerHTML = design.innerHTML + "#content {position: absolute; left: 50%; margin: 0 0 0 -" + (andel*0.4)*horisontell + "vmin; vw; font-family: 'Raleway', sans-serif;}"
+			design.innerHTML = design.innerHTML + "#content {position: absolute; left: 50%; text-align: center; margin: 0 0 0 -" + (andel*0.4)*horisontell + "vmin; vw; font-family: 'Raleway', sans-serif;}"
 
 		};
 
@@ -133,6 +135,7 @@ document.addEventListener("DOMContentLoaded",
 				};
 
 			};
+			mitt = mitt + horisontell;
 			console.log("flyttaNerRad");
 		};
 
@@ -154,25 +157,16 @@ document.addEventListener("DOMContentLoaded",
 		};
 
 		function kontrolleraFörlust() {
-			var antalFylldaRad = 0;
-			var test = 1;
-			var b = 1;
-			while (b <= horisontell) {
-				while (test < vertikal*horisontell) {
-					if (lista[test] == 2) {
-						antalFylldaRad++;
-					};
-					test = test + horisontell;
-					if (antalFylldaRad == vertikal) {
-						document.getElementById("content").innerHTML = document.getElementById("content").innerHTML + "<div class='hugeRed'> lose </h1>";
-						console.log("FAIIIIIIIIIL");
-						failSomFan = 1;
-					};
-				};
-				b++;
-				test = b;
-				antalFylldaRad = 0;
-
+			var scroller = 1;
+			var testOmFörlust = 0;
+			while (scroller <= horisontell) {
+				if (lista[scroller] == 2 || lista[scroller] == 3) {
+					testOmFörlust++;
+				}; 
+				scroller++;
+			};
+			if (testOmFörlust != 0) {
+				content.innerHTML = "<h2 style='text-align: center;'>Du förlorade, uppdatera sidan för att spela igen.</h2>"
 			};
 
 			console.log("kontrolleraFörlust");
@@ -196,23 +190,27 @@ document.addEventListener("DOMContentLoaded",
 					lista[mitt] = 1;
 					lista[mitt+horisontell] = 1;
 					lista[mitt+2*horisontell] =1;
+					bitTyp = 1;
 					console.log("bit vertikal skapad");
 				}else if (25 < klossSlumpare && klossSlumpare < 50){
 					lista[mitt] = 1;
 					lista[mitt+1] = 1;
 					lista[mitt-1] = 1;
+					bitTyp = 2;
 					console.log("bit horisontell skapad");
 				}else if (50 < klossSlumpare && klossSlumpare < 75){
 					lista[mitt] = 1;
 					lista[mitt+1] = 1;
 					lista[mitt-1] = 1;
 					lista[mitt+1+horisontell] = 1;
+					bitTyp = 3;
 					console.log("krokbit2 skapad");
 				}else if (75 < klossSlumpare && klossSlumpare < 100){
 					lista[mitt] = 1;
 					lista[mitt+1] = 1;
 					lista[mitt-1+horisontell] = 1;
 					lista[mitt-1] = 1;
+					bitTyp = 4;
 					console.log("krokbit skapad");
 				};
 			};
@@ -386,16 +384,15 @@ document.addEventListener("DOMContentLoaded",
 		// lista[13] = 2;
 		// lista[14] = 2;
 
-			var milliPerTick = 1000/3;
+			var milliPerTick = 1000;
 			variabeln = setInterval(webTetris, milliPerTick);
 			function webTetris() {
+					görStuck();
 	  				flyttaNerRad();
 					slumpaKloss();
 					rita();
 					poänghållare();
-	  		 		// testaOmRadKlar();
 	  		 		kontrolleraFörlust();
-	  		 		görStuck();
 			};
 
 	}
