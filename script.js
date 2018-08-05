@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded",
 		var stoppa = 0;
 		var bitTyp = 0;
 		var mitt = Math.round(horisontell/2);
+		var klossPosition;
 
 		// Betydelse av listvärden för divar. 0: inget på platsen 1: aktiv 2: blev stuck denna "tick" 3: stuck 
 		// + (horisontell*(50/andel)) +
@@ -182,6 +183,7 @@ document.addEventListener("DOMContentLoaded",
 				platsen++;
 			};
 			if (summa == 0) {
+				klossPosition = 1;
 				var mitt = Math.round(horisontell/2);
 				console.log("horisontell/2 ish: " + Math.round(horisontell/2))
 				var klossSlumpare = Math.round(Math.random()*100);
@@ -228,9 +230,14 @@ document.addEventListener("DOMContentLoaded",
 			var scrollare = 1;
 			var blockerare = 0;
 			var nyLista = new Array();
-			if (event.key == "w") {
-
-			}else if (event.key == "s") {
+			if (event.key == "w" || event.key == "W") {
+				while (scroll <= horisontell*vertikal) {
+					if (lista[scroll] == 1) {
+						lista[scroll] = 0;
+					};
+					scroll++;
+				};
+			}else if (event.key == "s" || event.key == "S") {
 				var block2;
 				while (blockerare == 0) {
 					block2 = 0;
@@ -250,7 +257,7 @@ document.addEventListener("DOMContentLoaded",
 					};
 				};
 
-			}else if (event.key == "a") {
+			}else if (event.key == "a" || event.key == "A") {
 				while (scrollare <= vertikal) {
 					if (lista[horisontell*scrollare-horisontell+1] == 1) {
 						blockerare++;
@@ -288,7 +295,7 @@ document.addEventListener("DOMContentLoaded",
 					};	
 				};
 				
-			}else if (event.key == "d") {
+			}else if (event.key == "d" || event.key == "D") {
 				while (scrollare <= vertikal) {
 					if (lista[horisontell*scrollare] == 1) {
 						blockerare++;
