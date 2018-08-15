@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded",
 				};
 				nummer++;
 			};
-			console.log("tetrisskapare");
+			// console.log("tetrisskapare");
 		};
 		
 		function skapaLista (x, y) { //skapar en array med vertikal*horisontell platser 
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded",
 				// console.log(lista[a]);
 				a++;
 			};
-			console.log("skapaLista");
+			// console.log("skapaLista");
 		};
 
 		function flyttaNerRad () {
@@ -100,73 +100,37 @@ document.addEventListener("DOMContentLoaded",
 			var mög = 0;
 			var megamög = 0;
 			plats = 1;
-			// while (mög < horisontell) {
-			// 	if (lista[vertikal*horisontell-mög] == 3 || lista[vertikal*horisontell-mög] == 2) {
-			// 		megamög++;
-			// 	};
-			// 	mög++;
-			// 	if (megamög == horisontell) {
-			// 		console.log("radfull!!")
-			// 		var mögLista = new Array();
-			// 		while (plats <= vertikal*horisontell) {
-			// 			if (lista[plats] == 3 || lista[plats] == 2) {
-			// 				scroll = lista[plats];
-			// 				mögLista[plats+horisontell] = scroll;
-			// 			}else if (lista[plats] == 1) {
-			// 				scroll = lista[plats];
-			// 				mögLista[plats] = scroll;
-			// 			};
-			// 			plats++;
-			// 		};
-			// 		plats = 1;
-			// 		while (plats <= vertikal*horisontell) {
-			// 			scroll = mögLista[plats];
-			// 			lista[plats] = scroll;
-			// 			plats++;
-			// 		};
-			// 		megamög = 0;
-			// 		mög = 0;
-			// 	};
-
-			// };
-			mitt = mitt + horisontell;
-			console.log("flyttaNerRad");
-		};
-
-		function kollaSistaRadenOchFlyttaNer () { // används inte men kanske behövs!!
-			var sistaRadKoll = 1;
-			var fylldaISistaRaden = 0;
-			var plats = 1;
-			var scroll;
-			var fyllFörstaRadenINyLista = 1;
-			while (sistaRadKoll <= horisontell) {
-				if (lista[vertikal*horisontell-sistaRadKoll] == 2 || lista[vertikal*horisontell-sistaRadKoll] == 3) {
-					fylldaISistaRaden++;
-					sistaRadKoll++;
-				}else {
-					sistaRadKoll++;
+			while (mög < horisontell) {
+				if (lista[vertikal*horisontell-mög] == 3 || lista[vertikal*horisontell-mög] == 2) {
+					megamög++;
 				};
-				if (fylldaISistaRaden == horisontell) {
-					sistaRadKoll = 1;
-					while (plats <= horisontell*vertikal-horisontell) {
-						scroll = lista[plats];
-						nyLista[plats+horisontell];
+				mög++;
+				if (megamög == horisontell) {
+					console.log("radfull!!")
+					var mögLista = new Array();
+					while (plats <= vertikal*horisontell) {
+						if (lista[plats] == 3 || lista[plats] == 2) {
+							scroll = lista[plats];
+							mögLista[plats+horisontell] = scroll;
+						}else if (lista[plats] == 1) {
+							scroll = lista[plats];
+							mögLista[plats] = scroll;
+						};
 						plats++;
-					};
-					while (fyllFörstaRadenINyLista <= horisontell) {
-						nyLista[fyllFörstaRadenINyLista] = 0;
-						fyllFörstaRadenINyLista++;
 					};
 					plats = 1;
 					while (plats <= vertikal*horisontell) {
-						scroll = nyLista[plats];
+						scroll = mögLista[plats];
 						lista[plats] = scroll;
 						plats++;
 					};
-					kollaSistaRadenOchFlyttaNer();
+					megamög = 0;
 				};
+
 			};
-			console.log("kollaSistaRadenOchFlyttaNer")
+			console.log(nyLista);
+			mitt = mitt + horisontell;
+			// console.log("flyttaNerRad");
 		};
 
 		function rita () {	//funktionen ritar rätt färg på rutan beroende på motsvarande divbox's värde i listan
@@ -183,7 +147,7 @@ document.addEventListener("DOMContentLoaded",
 				};
 				räknare++;
 			};
-			console.log("rita");
+			// console.log("rita");
 		};
 
 		function kontrolleraFörlust() {
@@ -199,7 +163,7 @@ document.addEventListener("DOMContentLoaded",
 				content.innerHTML = "<h2 style='text-align: center;'>Du förlorade, uppdatera sidan för att spela igen.</h2>"
 			};
 
-			console.log("kontrolleraFörlust");
+			// console.log("kontrolleraFörlust");
 		};
 
 		function slumpaKloss () {
@@ -559,9 +523,9 @@ document.addEventListener("DOMContentLoaded",
 				
 
 			};
-			console.log("horisontellPlacering + " + horisontellPlacering);
-			console.log("vertikalPlacering + " + vertikalPlacering);
-			console.log(event.key + ": klossrörelse");
+			// console.log("horisontellPlacering + " + horisontellPlacering);
+			// console.log("vertikalPlacering + " + vertikalPlacering);
+			// console.log(event.key + ": klossrörelse");
 			rita();
 		};
 
@@ -583,7 +547,7 @@ document.addEventListener("DOMContentLoaded",
 						}else {
 							klossPosition++;
 						};
-						console.log("mitt = " + mitt);
+						// console.log("mitt = " + mitt);
 					};
 		};
 
@@ -611,7 +575,7 @@ document.addEventListener("DOMContentLoaded",
 				placement++;
 			};
 
-			console.log("görStuck");
+			// console.log("görStuck");
 		};
 		
 		function stuckPermanent () {
@@ -622,7 +586,7 @@ document.addEventListener("DOMContentLoaded",
 				};
 				vandrare++;
 			};
-			console.log("stuckPermanent");
+			// console.log("stuckPermanent");
 		};
 
 		function testaOmPush () {
@@ -643,9 +607,9 @@ document.addEventListener("DOMContentLoaded",
 			};
 		};
 
-		styleSetup();		//stilfixarn
-		tetrisskapare(horisontell, vertikal); //divboxar, spelplan
-		skapaLista(horisontell, vertikal); // lista                        Dessa körs efterdirekt DOMContentLoaded och behöver bara köras en gång.
+		styleSetup();
+		tetrisskapare(horisontell, vertikal);
+		skapaLista(horisontell, vertikal);
 
 			var milliPerTick = 700;
 			variabeln = setInterval(webTetris, milliPerTick);
@@ -657,7 +621,6 @@ document.addEventListener("DOMContentLoaded",
 					poänghållare();
 	  		 		kontrolleraFörlust();
 			};
-
 	}
 );
 
