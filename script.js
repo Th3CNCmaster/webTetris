@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded",
 		document.addEventListener("keydown", klossrörelse);
 		var nummer = 1;
 		var lista = new Array();
-		var vertikal = 12;
-		var horisontell = 6;		
+		var vertikal = 20;
+		var horisontell = 10;		
 		var xCount = 0;
 		var yCount = 0;
 		var end = document.getElementById("end");
@@ -129,7 +129,6 @@ document.addEventListener("DOMContentLoaded",
 			};
 			console.log(nyLista);
 			mitt = mitt + horisontell;
-			görStuck();
 			kontrolleraFörlust();
 			// console.log("flyttaNerRad");
 		};
@@ -140,7 +139,7 @@ document.addEventListener("DOMContentLoaded",
 				if (lista[räknare] == 1) {
 					document.getElementById(räknare).style.backgroundColor = "lightblue";
 				}else if (lista[räknare] == 2){
-					document.getElementById(räknare).style.backgroundColor = "green";
+					document.getElementById(räknare).style.backgroundColor = "red";
 				}else if (lista[räknare] == 3){
 					document.getElementById(räknare).style.backgroundColor = "green";
 				}else {
@@ -239,7 +238,6 @@ document.addEventListener("DOMContentLoaded",
 					console.log("Z");
 				};
 			};
-			görStuck();
 		};
 
 		function poänghållare () {
@@ -427,7 +425,6 @@ document.addEventListener("DOMContentLoaded",
 						testaOmRotation(mitt, mitt-1, mitt+horisontell, mitt+1+horisontell);
 					};
 				};
-				görStuck();
 			}else if (event.key == "s" || event.key == "S") {
 				var block2;
 				while (blockerare == 0) {
@@ -447,7 +444,6 @@ document.addEventListener("DOMContentLoaded",
 						rita();
 					};
 				};
-				görStuck();
 			}else if (event.key == "a" || event.key == "A") {
 				while (scrollare <= vertikal) {
 					if (lista[horisontell*scrollare-horisontell+1] == 1) {
@@ -487,7 +483,6 @@ document.addEventListener("DOMContentLoaded",
 					mitt--;
 					horisontellPlacering--;
 				};
-				görStuck();
 			}else if (event.key == "d" || event.key == "D") {
 				while (scrollare <= vertikal) {
 					if (lista[horisontell*scrollare] == 1) {
@@ -527,7 +522,6 @@ document.addEventListener("DOMContentLoaded",
 					mitt++;
 					horisontellPlacering++;
 				};
-				görStuck();
 
 			};
 			// console.log("horisontellPlacering + " + horisontellPlacering);
@@ -610,7 +604,7 @@ document.addEventListener("DOMContentLoaded",
 		tetrisskapare(horisontell, vertikal);
 		skapaLista(horisontell, vertikal);
 
-			var milliPerTick = 700;
+			var milliPerTick = 1000;
 			variabeln = setInterval(webTetris, milliPerTick);
 			function webTetris() {
 					görStuck();
