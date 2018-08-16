@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded",
 		var horisontell = 6;		
 		var xCount = 0;
 		var yCount = 0;
+		var end = document.getElementById("end");
 		var content = document.getElementById("content");
 		var poäng = 0;
 		var design = document.getElementById("jsDesign");
@@ -16,8 +17,8 @@ document.addEventListener("DOMContentLoaded",
 		var bitTyp = 0;
 		var mitt = Math.round(horisontell/2);
 		var klossPosition;
-		var horisontellPlacering = Math.round(horisontell/2); // Håller reda på klossens vertikala placering så att den vet när man kan snurra så att inte en bit av klossen sticker ut på andra sidan.
-		var vertikalPlacering = 1;  // som horisontellPlacering fast i vertikalled.
+		var horisontellPlacering = Math.round(horisontell/2);
+		var vertikalPlacering = 1;
 		var stickUtHöger;
 		var stickUtVänster;
 		var stickUtUpp;
@@ -26,8 +27,7 @@ document.addEventListener("DOMContentLoaded",
 		var frånVänsterKant;
 		var frånHögerKant;
 		var frånTopp;
-		// Betydelse av listvärden för divar. 0: inget på platsen 1: aktiv 2: blev stuck denna "tick" 3: stuck 
-		// + (horisontell*(50/andel)) +
+
 		function styleSetup () {
 			var andel;
 			if (horisontell > vertikal) {
@@ -38,13 +38,11 @@ document.addEventListener("DOMContentLoaded",
 
 			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px;}"
 			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px; clear: both;}"
-			design.innerHTML = design.innerHTML + ".hugeRed {width: 100vw; height: 100vh; background-color: red; float: left;}"
-			design.innerHTML = design.innerHTML + ".hugeGreen {width: 100vw; height: 100vh; background-color: green; float: left;}"
 			design.innerHTML = design.innerHTML + "#content {position: absolute; left: 50%; text-align: center; margin: 0 0 0 -" + (andel*0.4)*horisontell + "vmin; vw; font-family: 'Raleway', sans-serif;}"
 
 		};
 
-		function tetrisskapare (x, y) {		// skapar divboxar, numrerar dem med koordinater, och ritar spelplanen
+		function tetrisskapare (x, y) {	
 			while (xCount < x && yCount < y) {			
 				if (xCount == 0) {
 					content.innerHTML = content.innerHTML + "<div id='" + nummer + "' class='firstTet'></div>"
@@ -62,7 +60,7 @@ document.addEventListener("DOMContentLoaded",
 			// console.log("tetrisskapare");
 		};
 		
-		function skapaLista (x, y) { //skapar en array med vertikal*horisontell platser 
+		function skapaLista (x, y) {
 			var i = x*y-1;
 			var a = 0;
 			while (a <= i) {
@@ -107,6 +105,7 @@ document.addEventListener("DOMContentLoaded",
 				mög++;
 				if (megamög == horisontell) {
 					console.log("radfull!!")
+					poäng = poäng + 1000;
 					var mögLista = new Array();
 					while (plats <= vertikal*horisontell) {
 						if (lista[plats] == 3 || lista[plats] == 2) {
@@ -130,6 +129,8 @@ document.addEventListener("DOMContentLoaded",
 			};
 			console.log(nyLista);
 			mitt = mitt + horisontell;
+			görStuck();
+			kontrolleraFörlust();
 			// console.log("flyttaNerRad");
 		};
 
@@ -139,7 +140,7 @@ document.addEventListener("DOMContentLoaded",
 				if (lista[räknare] == 1) {
 					document.getElementById(räknare).style.backgroundColor = "lightblue";
 				}else if (lista[räknare] == 2){
-					document.getElementById(räknare).style.backgroundColor = "red";
+					document.getElementById(räknare).style.backgroundColor = "green";
 				}else if (lista[räknare] == 3){
 					document.getElementById(räknare).style.backgroundColor = "green";
 				}else {
@@ -160,13 +161,17 @@ document.addEventListener("DOMContentLoaded",
 				scroller++;
 			};
 			if (testOmFörlust != 0) {
-				content.innerHTML = "<h2 style='text-align: center;'>Du förlorade, uppdatera sidan för att spela igen.</h2>"
+				content.innerHTML = "";
+				end.innerHTML = "<h1>Game Over!<h1> <button onclick='location.reload();'>Play again</button>"
+				clearInterval(variabeln);
 			};
+
 
 			// console.log("kontrolleraFörlust");
 		};
 
 		function slumpaKloss () {
+			kontrolleraFörlust();
 			var platsen = 1;
 			var summa = 0;
 			while (platsen <= vertikal*horisontell) {
@@ -234,15 +239,16 @@ document.addEventListener("DOMContentLoaded",
 					console.log("Z");
 				};
 			};
+			görStuck();
 		};
 
 		function poänghållare () {
-			document.getElementById("poäng").innerHTML = "<h2>" + poäng + "</h2>"
+			document.getElementById("poäng").innerHTML = "<h2>" + "Score: " + poäng + "</h2>"
 			poäng = poäng + 10;
 			console.log("poänghållare")
 		};
 
-		function klossrörelse (event) {				//Buggy AF :-(, ritar automatiskt efter körning
+		function klossrörelse (event) {				
 			var plats = 1;
 			var scroll = 1;
 			var scrollare = 1;
@@ -421,6 +427,7 @@ document.addEventListener("DOMContentLoaded",
 						testaOmRotation(mitt, mitt-1, mitt+horisontell, mitt+1+horisontell);
 					};
 				};
+				görStuck();
 			}else if (event.key == "s" || event.key == "S") {
 				var block2;
 				while (blockerare == 0) {
@@ -440,7 +447,7 @@ document.addEventListener("DOMContentLoaded",
 						rita();
 					};
 				};
-
+				görStuck();
 			}else if (event.key == "a" || event.key == "A") {
 				while (scrollare <= vertikal) {
 					if (lista[horisontell*scrollare-horisontell+1] == 1) {
@@ -480,7 +487,7 @@ document.addEventListener("DOMContentLoaded",
 					mitt--;
 					horisontellPlacering--;
 				};
-				
+				görStuck();
 			}else if (event.key == "d" || event.key == "D") {
 				while (scrollare <= vertikal) {
 					if (lista[horisontell*scrollare] == 1) {
@@ -520,7 +527,7 @@ document.addEventListener("DOMContentLoaded",
 					mitt++;
 					horisontellPlacering++;
 				};
-				
+				görStuck();
 
 			};
 			// console.log("horisontellPlacering + " + horisontellPlacering);
@@ -574,19 +581,7 @@ document.addEventListener("DOMContentLoaded",
 				};
 				placement++;
 			};
-
 			// console.log("görStuck");
-		};
-		
-		function stuckPermanent () {
-			var vandrare = 1;
-			while (vandrare <= horisontell*vertikal) {
-				if (lista[vandrare] == 2) {
-					lista[vandrare] == 3;
-				};
-				vandrare++;
-			};
-			// console.log("stuckPermanent");
 		};
 
 		function testaOmPush () {
@@ -605,6 +600,10 @@ document.addEventListener("DOMContentLoaded",
 			}else {
 				tryckNer = 0;
 			};
+		};
+
+		function restart () {
+			location.reload();
 		};
 
 		styleSetup();

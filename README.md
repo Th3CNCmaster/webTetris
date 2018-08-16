@@ -1,2 +1,2 @@
 # webTetris
-Tetris på internet
+My first attempt to make Tetris in javascript!
