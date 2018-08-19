@@ -95,6 +95,9 @@ document.addEventListener("DOMContentLoaded",
 				lista[plats] = scroll;
 				plats++;
 			};
+
+
+
 			var mög = 0;
 			var megamög = 0;
 			plats = 1;
@@ -132,6 +135,18 @@ document.addEventListener("DOMContentLoaded",
 			kontrolleraFörlust();
 			// console.log("flyttaNerRad");
 		};
+
+		function flyttaNerFullRad () {		// Broken code to be implemented later
+			var row = 1;
+			var tester = 1;
+			var amountFilled = 0;
+
+			while (row <= vertikal) {
+				while (tester + horisontell*row-horisontell*1 <= horisontell) {
+
+				};
+			};
+		};	
 
 		function rita () {	//funktionen ritar rätt färg på rutan beroende på motsvarande divbox's värde i listan
 			var räknare = 1;
@@ -575,6 +590,13 @@ document.addEventListener("DOMContentLoaded",
 				};
 				placement++;
 			};
+			placement = horisontell*vertikal;
+			while (placement >= 1) {
+				if (lista[placement-horisontell] == 2 && lista[placement] == 1 || lista[placement+horisontell] == 2 && lista[placement] == 1 || lista[placement+1] == 2 && lista[placement] == 1 || lista[placement-1] == 2 && lista[placement] == 1) {
+					lista[placement] = 2;
+				};
+				placement--;
+			};
 			// console.log("görStuck");
 		};
 
@@ -595,11 +617,6 @@ document.addEventListener("DOMContentLoaded",
 				tryckNer = 0;
 			};
 		};
-
-		function restart () {
-			location.reload();
-		};
-
 		styleSetup();
 		tetrisskapare(horisontell, vertikal);
 		skapaLista(horisontell, vertikal);
