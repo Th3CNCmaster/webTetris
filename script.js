@@ -3,12 +3,14 @@ document.addEventListener("DOMContentLoaded",
 		document.addEventListener("keydown", klossrörelse);
 		var nummer = 1;
 		var lista = new Array();
+		var previewLista = new Array();
 		var vertikal = 20;
 		var horisontell = 10;		
 		var xCount = 0;
 		var yCount = 0;
 		var end = document.getElementById("end");
 		var content = document.getElementById("content");
+		var nextBit = document.getElementById("nextBit");
 		var poäng = 0;
 		var design = document.getElementById("jsDesign");
 		var variabeln;
@@ -27,6 +29,10 @@ document.addEventListener("DOMContentLoaded",
 		var frånVänsterKant;
 		var frånHögerKant;
 		var frånTopp;
+		var nästaKloss = Math.round(Math.random()*100);
+		var nästNästaKloss = Math.round(Math.random()*100);
+		var nästNästNästaKloss;
+		var x = 1;
 
 		function styleSetup () {
 			var andel;
@@ -39,7 +45,34 @@ document.addEventListener("DOMContentLoaded",
 			design.innerHTML = design.innerHTML + ".tet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px;}"
 			design.innerHTML = design.innerHTML + ".firstTet {background-color: gray; width: " + (andel*0.8) + "vmin; height: " + (andel*0.8) + "vmin; float: left; border: 1px solid black; margin: 0px; clear: both;}"
 			design.innerHTML = design.innerHTML + "#content {position: absolute; left: 50%; text-align: center; margin: 0 0 0 -" + (andel*0.4)*horisontell + "vmin; vw; font-family: 'Raleway', sans-serif;}"
+			design.innerHTML = design.innerHTML + "#nextBit {position: absolute; left: 7.5%; text-align: center; margin: 0 0 0 -" + (andel*0.8)*2 + "px; vmin; vw; font-family: 'Raleway', sans-serif;}"
+		};
 
+		function resetPreview () {
+			var räkna = 1;
+			while (räkna <= 4*12) {
+				previewLista[räkna] = 0;
+			};
+		};
+
+		function flyttaUppPreview () {
+			var räkna = 4*12;
+			var a;
+			var previewLista2 = new Array();
+			while (räkna >= 4*4) {
+				a = previewLista[räkna];
+				previewLista2[räkna - 4*4] = a;
+				räkna--;
+			};
+			räkna = 4*12;
+			while (räkna >= 1) {
+				if (previewLista2[räkna] == 1) {
+					previewLista[räkna] = 1;
+				}else {
+					previewLista[räkna] = 0;
+				};
+				räkna--;
+			};
 		};
 
 		function tetrisskapare (x, y) {	
@@ -58,6 +91,26 @@ document.addEventListener("DOMContentLoaded",
 				nummer++;
 			};
 			// console.log("tetrisskapare");
+			var xLed = 1;
+			var yLed = 1;
+			nummer = 1;
+			while (xLed <= 4 && yLed <= 12) {			
+				if (xLed == 1) {
+					nextBit.innerHTML = nextBit.innerHTML + "<div id='" + nummer + "a' class='firstTet'></div>"
+					xLed++;
+					console.log("NextFirstTet");
+				}else if (xLed == 4) {
+					nextBit.innerHTML = nextBit.innerHTML + "<div id='" + nummer + "a' class='tet'></div>"
+					xLed = 1;
+					yLed++;
+					console.log("NextTet");
+				}else {
+					nextBit.innerHTML = nextBit.innerHTML + "<div id='" + nummer + "a' class='tet'></div>"
+					xLed++;
+					console.log("NextTet");
+				};
+				nummer++;
+			};
 		};
 		
 		function skapaLista (x, y) {
@@ -65,6 +118,17 @@ document.addEventListener("DOMContentLoaded",
 			var a = 0;
 			while (a <= i) {
 				lista[a] = 0;
+				// console.log(lista[a]);
+				a++;
+			};
+			// console.log("skapaLista");
+		};
+
+		function skapaLista2 () {
+			var i = 4*12-1;
+			var a = 0;
+			while (a <= i) {
+				previewLista[a] = 0;
 				// console.log(lista[a]);
 				a++;
 			};
@@ -130,7 +194,7 @@ document.addEventListener("DOMContentLoaded",
 				};
 
 			};
-			console.log(nyLista);
+			// console.log(nyLista);
 			mitt = mitt + horisontell;
 			kontrolleraFörlust();
 			// console.log("flyttaNerRad");
@@ -165,6 +229,19 @@ document.addEventListener("DOMContentLoaded",
 			// console.log("rita");
 		};
 
+		function rita2 () {	//funktionen ritar rätt färg på rutan beroende på motsvarande divbox's värde i listan
+			var räknare = 1;
+			while(räknare <= 4*12) {
+				if (previewLista[räknare] == 1) {
+					document.getElementById(räknare + "a").style.backgroundColor = "lightblue";
+				}else {
+					document.getElementById(räknare + "a").style.backgroundColor = "gray";
+				};
+				räknare++;
+			};
+			// console.log("rita");
+		};
+
 		function kontrolleraFörlust() {
 			var scroller = 1;
 			var testOmFörlust = 0;
@@ -176,6 +253,7 @@ document.addEventListener("DOMContentLoaded",
 			};
 			if (testOmFörlust != 0) {
 				content.innerHTML = "";
+				nextBit.innerHTML = "";
 				end.innerHTML = "<h1>Game Over!<h1> <button onclick='location.reload();'>Play again</button>"
 				clearInterval(variabeln);
 			};
@@ -200,7 +278,10 @@ document.addEventListener("DOMContentLoaded",
 				vertikalPlacering = 1;
 				mitt = Math.round(horisontell/2);
 				console.log("horisontell/2 ish: " + Math.round(horisontell/2))
-				var klossSlumpare = Math.round(Math.random()*100);
+				var klossSlumpare = nästaKloss;
+				nästaKloss = nästNästaKloss;
+				nästNästNästaKloss = Math.round(Math.random()*100);
+				nästNästaKloss = nästNästNästaKloss;
 				console.log(klossSlumpare);
 				if (0 <= klossSlumpare && klossSlumpare < 14) {
 					lista[mitt] = 1;
@@ -252,8 +333,69 @@ document.addEventListener("DOMContentLoaded",
 					bitTyp = 7;
 					console.log("Z");
 				};
+				if (x == 1) {
+					flyttaUppPreview();
+					x++;
+				}; 
+				flyttaUppPreview();
+				previewSetup();
+				rita2();
 			};
 		};
+
+		function previewSetup () {
+			if (0 <= nästNästNästaKloss && nästNästNästaKloss < 14) {
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1] = 1;
+					previewLista[4*10+2+2] = 1;
+					previewLista[4*10+2-1] = 1;
+					rita2();
+					console.log("I");
+				}else if (14 < nästNästNästaKloss && nästNästNästaKloss < 28){
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1] = 1;
+					previewLista[4*10+2-1*4] = 1;
+					previewLista[4*10+2-1] = 1;
+					rita2();
+					console.log("J");
+				}else if (28 < nästNästNästaKloss && nästNästNästaKloss < 42){
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1] = 1;
+					previewLista[4*10+2-1*4] = 1;
+					previewLista[4*10+2-1] = 1;
+					rita2();
+					console.log("L");
+				}else if (42 < nästNästNästaKloss && nästNästNästaKloss < 56){
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1] = 1;
+					previewLista[4*10+2+1*4] = 1;
+					previewLista[4*10+2+1+1*4] = 1;
+					rita2();
+					console.log("O");
+				}else if (56 < nästNästNästaKloss && nästNästNästaKloss < 70){
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1] = 1;
+					previewLista[4*10+2+1*4] = 1;
+					previewLista[4*10+2-1+1*4] = 1;
+					rita2();
+					console.log("S");
+				}else if (70 < nästNästNästaKloss && nästNästNästaKloss < 84){
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1] = 1;
+					previewLista[4*10+2+1*4] = 1;
+					previewLista[4*10+2-1] = 1;
+					rita2();
+					console.log("T");
+				}else if (84 < nästNästNästaKloss && nästNästNästaKloss < 100){
+					previewLista[4*10+2] = 1;
+					previewLista[4*10+2+1*4] = 1;
+					previewLista[4*10+2+1+1*4] = 1;
+					previewLista[4*10+2-1] = 1;
+					rita2();
+					console.log("Z");
+				};
+		};
+		
 
 		function poänghållare () {
 			document.getElementById("poäng").innerHTML = "<h2>" + "Score: " + poäng + "</h2>"
@@ -620,17 +762,19 @@ document.addEventListener("DOMContentLoaded",
 		styleSetup();
 		tetrisskapare(horisontell, vertikal);
 		skapaLista(horisontell, vertikal);
+		skapaLista2();
 
-			var milliPerTick = 1000;
-			variabeln = setInterval(webTetris, milliPerTick);
-			function webTetris() {
-					görStuck();
-	  				flyttaNerRad();
-					slumpaKloss();
-					rita();
-					poänghållare();
-	  		 		kontrolleraFörlust();
-			};
+
+		var milliPerTick = 1000;
+		variabeln = setInterval(webTetris, milliPerTick);
+		function webTetris() {
+				görStuck();
+	  			flyttaNerRad();
+				slumpaKloss();
+				rita();
+				poänghållare();
+	  		 	kontrolleraFörlust();
+		};
 	}
 );
 

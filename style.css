@@ -9,9 +9,14 @@ body {
 	text-align: center;
 }
 #poäng {
-	float: right; 
+	float: left; 
+	position: absolute;
+	left: 75%;
 }
 #end {
 	text-align: center;
+}
+#nextBit {
+	float: left;
 }
 
